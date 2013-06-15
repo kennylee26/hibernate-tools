@@ -632,6 +632,5 @@ public class DocExporter extends AbstractExporter {
 
     public String getName() {
     	return "hbm2doc";
-    }
-       
+    }       
 }

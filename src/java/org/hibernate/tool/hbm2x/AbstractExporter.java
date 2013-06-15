@@ -35,11 +35,29 @@ public abstract class AbstractExporter implements Exporter {
 
 	private Cfg2HbmTool c2h;
 	private Cfg2JavaTool c2j;
+	//XXX add by kennylee 
+	/**
+	 * 是否覆盖已存在的文件
+	 */
+	private boolean isOverride = true;
+	/**
+	 * 是否需要数据库中的tk前缀
+	 */
+	private boolean isTk = true;
+	//END
 
 	public AbstractExporter(Configuration cfg, File outputdir) {
 		this();
 		setConfiguration(cfg);
 		setOutputDirectory(outputdir);		
+	}
+	
+	public AbstractExporter(Configuration cfg, File outputdir, boolean override, boolean isTk) {
+		this();
+		setConfiguration(cfg);
+		setOutputDirectory(outputdir);	
+		setOverride(isOverride);
+		setTk(isTk);
 	}
 
 	public AbstractExporter() {
@@ -253,5 +271,21 @@ public abstract class AbstractExporter implements Exporter {
 	
 	public Cfg2JavaTool getCfg2JavaTool() {
 		return c2j;
+	}
+
+	public boolean isOverride() {
+		return isOverride;
+	}
+
+	public void setOverride(boolean isOverride) {
+		this.isOverride = isOverride;
+	}
+
+	public boolean isTk() {
+		return isTk;
+	}
+
+	public void setTk(boolean isTk) {
+		this.isTk = isTk;
 	}
 }

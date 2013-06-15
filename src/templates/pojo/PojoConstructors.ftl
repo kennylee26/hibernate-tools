@@ -1,9 +1,15 @@
 
 <#--  /** default constructor */ -->
+    /**
+     * default constructor
+     */
     public ${pojo.getDeclarationName()}() {
     }
 
 <#if pojo.needsMinimalConstructor()>	<#-- /** minimal constructor */ -->
+    /**
+     * minimal constructor
+     */
     public ${pojo.getDeclarationName()}(${c2j.asParameterList(pojo.getPropertyClosureForMinimalConstructor(), jdk5, pojo)}) {
 <#if pojo.isSubclass() && !pojo.getPropertyClosureForSuperclassMinimalConstructor().isEmpty()>
         super(${c2j.asArgumentList(pojo.getPropertyClosureForSuperclassMinimalConstructor())});        
@@ -15,6 +21,9 @@
 </#if>    
 <#if pojo.needsFullConstructor()>
 <#-- /** full constructor */ -->
+    /**
+     * full constructor
+     */
     public ${pojo.getDeclarationName()}(${c2j.asParameterList(pojo.getPropertyClosureForFullConstructor(), jdk5, pojo)}) {
 <#if pojo.isSubclass() && !pojo.getPropertyClosureForSuperclassFullConstructor().isEmpty()>
         super(${c2j.asArgumentList(pojo.getPropertyClosureForSuperclassFullConstructor())});        

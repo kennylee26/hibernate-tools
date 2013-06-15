@@ -10,7 +10,6 @@ import java.util.StringTokenizer;
 
 import org.hibernate.cfg.Configuration;
 import org.hibernate.mapping.Component;
-import org.hibernate.mapping.PersistentClass;
 import org.hibernate.tool.hbm2x.pojo.ComponentPOJOClass;
 import org.hibernate.tool.hbm2x.pojo.POJOClass;
 import org.hibernate.util.StringHelper;
@@ -73,10 +72,15 @@ public class GenericExporter extends AbstractExporter {
 	public GenericExporter(Configuration cfg, File outputdir) {
 		super(cfg,outputdir);
 	}
+	
+	public GenericExporter(Configuration cfg, File outputdir,
+			boolean isOverride, boolean isTk) {
+		super(cfg, outputdir,isOverride,isTk);
+	}
 
 	public GenericExporter() {
 	}
-	
+
 	public String getTemplateName() {
 		return templateName;
 	}
@@ -138,14 +142,25 @@ public class GenericExporter extends AbstractExporter {
 	}
 
 	protected void exportPOJO(Map additionalContext, POJOClass element) {
-		TemplateProducer producer = new TemplateProducer(getTemplateHelper(),getArtifactCollector());					
-		additionalContext.put("pojo", element);
-		additionalContext.put("clazz", element.getDecoratedObject());
 		String filename = resolveFilename( element );
 		if(filename.endsWith(".java") && filename.indexOf('$')>=0) {
 			log.warn("Filename for " + getClassNameForFile( element ) + " contains a $. Innerclass generation is not supported.");
 		}
-		producer.produce(additionalContext, getTemplateName(), new File(getOutputDirectory(),filename), templateName, element.toString());
+		//XXX add by kennylee, if DAO its exist skip...
+		if(filename!=null && filename.length() > 0){
+			if(!isOverride()){
+				File checkFile = new File(getOutputDirectory(),filename);
+				if(checkFile.exists()){
+					return;
+				}
+				checkFile = null;	
+			}
+		}
+		//END
+		TemplateProducer producer = new TemplateProducer(getTemplateHelper(),getArtifactCollector());					
+		additionalContext.put("pojo", element);
+		additionalContext.put("clazz", element.getDecoratedObject());
+		producer.produce(additionalContext, getTemplateName(), new File(getOutputDirectory(), filename), templateName, element.toString());
 	}
 
 	protected String resolveFilename(POJOClass element) {
@@ -163,7 +178,11 @@ public class GenericExporter extends AbstractExporter {
 	}
 
 	protected String getClassNameForFile(POJOClass element) {
-		return element.getDeclarationName();
+		String className =  element.getDeclarationName();
+		if(!isTk()){
+			return element.getFriendlyClassName();
+		}
+		return className;
 	}
 
 	public void setFilePattern(String filePattern) {

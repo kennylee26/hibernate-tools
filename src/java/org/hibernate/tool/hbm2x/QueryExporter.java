@@ -88,5 +88,4 @@ public class QueryExporter extends AbstractExporter {
 	public void setQueries(List queryStrings) {
 		this.queryStrings = queryStrings;		
 	}
-
 }

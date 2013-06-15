@@ -50,7 +50,8 @@ public class HibernateMappingExporter extends GenericExporter {
     
 	protected void init() {
 		setTemplateName("hbm/hibernate-mapping.hbm.ftl");
-    	setFilePattern("{package-name}/{class-name}.hbm.xml");    	
+		//XXX modify by kennylee, add hbm folder to save hbm.xml files.
+    	setFilePattern("{package-name}/hbm/{class-name}.hbm.xml");    	
 	}
 
 	public HibernateMappingExporter() {

@@ -20,15 +20,23 @@ public class POJOExporter extends GenericExporter {
     	init();
     }
     
+	public POJOExporter(Configuration cfg, File outputdir, boolean isOverride,
+			boolean isTk) {
+    	super(cfg, outputdir, isOverride, isTk);    	
+    	init();
+	}
+    
 	protected void init() {
 		setTemplateName(POJO_JAVACLASS_FTL);
-    	setFilePattern("{package-name}/{class-name}.java");    	
+		//XXX modify by kennylee, add po folder.
+    	setFilePattern("{package-name}/po/{class-name}.java");    	
 	}
 
 	public POJOExporter() {
 		init();		
 	}
     
+
 	public String getName() {
 		return "hbm2java";
 	}

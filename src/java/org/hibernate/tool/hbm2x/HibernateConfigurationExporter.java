@@ -193,4 +193,24 @@ public class HibernateConfigurationExporter extends AbstractExporter {
 		return result.toString();
 	  }
 
+	public boolean isOverride() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public void setOverride(boolean isOverride) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public boolean isTk() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public void setTk(boolean isTk) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

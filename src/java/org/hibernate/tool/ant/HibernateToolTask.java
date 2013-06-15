@@ -32,6 +32,16 @@ public class HibernateToolTask extends Task {
 	}
 	ConfigurationTask configurationTask;
 	private File destDir;
+	//XXX add by kennylee 
+	/**
+	 * 是否覆盖已存在的文件
+	 */
+	private boolean isOverride = true;
+	/**
+	 * 是否需要数据库中的tk前缀
+	 */
+	private boolean isTk = true;
+	//END
 	private List generators = new ArrayList();
 	private Path classPath;
 	private Path templatePath;
@@ -123,7 +133,10 @@ public class HibernateToolTask extends Task {
 	}*/
 	
 	public ExporterTask createHbm2DAO(){
-        ExporterTask generator= new Hbm2DAOExporterTask(this);
+		HibernateToolTask task  = this;
+        ExporterTask generatorInterface= new Hbm2DAOInterfaceExporterTask(task);
+        ExporterTask generator= new Hbm2DAOExporterTask(task);
+        addGenerator( generatorInterface );
         addGenerator( generator );
         return generator;
 	}
@@ -180,9 +193,33 @@ public class HibernateToolTask extends Task {
 			loader.setParent(classLoader ); // if this is not set, classes from the taskdef cannot be found - which is crucial for e.g. annotations.
 			loader.setThreadContextLoader();
 			
+			//FIXME 莫名其妙 override的参数传入hbm2DAO的时候 Hbm2DAOInterfaceExporterTask接收不了，而Hbm2DAOExporterTask接收到。
+			//暂时使用拷贝属性方法解决吧。 by kenylee 
+			Hbm2DAOExporterTask daoTask = null;
+			Hbm2DAOInterfaceExporterTask daoInterTask = null;
+			for (int i = 0; i < generators.size(); i++) {
+				ExporterTask task = (ExporterTask) generators.get(i);
+				if(task instanceof Hbm2DAOExporterTask){
+					daoTask = (Hbm2DAOExporterTask) task;
+				}else if( task instanceof Hbm2DAOInterfaceExporterTask){
+					daoInterTask = (Hbm2DAOInterfaceExporterTask) task;
+				}
+				if(daoTask!=null && daoInterTask!=null){
+					daoInterTask.setDestdir(daoTask.getDestdir());
+					daoInterTask.setEjb3(daoTask.ejb3);
+					daoInterTask.setJdk5(daoTask.jdk5);
+					daoInterTask.setTemplatePath(daoTask.getTemplatePath());
+					daoInterTask.setOverride(daoTask.isOverride());
+					daoInterTask.setTk(daoTask.isTk());
+					break;
+				}
+			}
+			//END
+			
 			while (iterator.hasNext() ) {				
 				generatorTask = (ExporterTask) iterator.next();
 				log(count++ + ". task: " + generatorTask.getName() );
+				log("override: "+String.valueOf(generatorTask.isOverride()));
 				generatorTask.execute();			
 			}
 		} catch (RuntimeException re) {
@@ -326,6 +363,22 @@ public class HibernateToolTask extends Task {
 	
 	public void addConfiguredProperty(Environment.Variable property) {
 		properties.put(property.getKey(), property.getValue());
+	}
+
+	public boolean isOverride() {
+		return isOverride;
+	}
+
+	public void setOverride(boolean isOverride) {
+		this.isOverride = isOverride;
+	}
+
+	public boolean isTk() {
+		return isTk;
+	}
+
+	public void setTk(boolean isTk) {
+		this.isTk = isTk;
 	}
 	
 	

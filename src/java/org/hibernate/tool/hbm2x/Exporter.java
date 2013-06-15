@@ -60,4 +60,12 @@ public interface Exporter {
 	 */
 	public void start();
 	
+	public boolean isOverride();
+
+	public void setOverride(boolean isOverride);
+
+	public boolean isTk();
+
+	public void setTk(boolean isTk);
+	
 }

@@ -19,11 +19,12 @@ public class Hbm2DAOExporterTask extends Hbm2JavaExporterTask {
 	}
 	
 	protected Exporter createExporter() {
-		return new DAOExporter(parent.getConfiguration(), parent.getDestDir()) ;
+		//XXX modify by kennylee, support override and tk confing
+		return new DAOExporter(parent.getConfiguration(), parent.getDestDir(), parent.isOverride(), parent.isTk()) ;
 	}
 
 	public String getName() {
-		return "hbm2dao (Generates a set of DAOs)";
+		return "hbm2dao (Generates a set of DAOImpls)";
 	}
 
 }

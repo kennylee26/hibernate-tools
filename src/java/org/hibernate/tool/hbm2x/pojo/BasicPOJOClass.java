@@ -5,10 +5,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import org.hibernate.cfg.reveng.ReverseEngineeringStrategyUtil;
-import org.hibernate.mapping.Any;
 import org.hibernate.mapping.Array;
 import org.hibernate.mapping.Bag;
 import org.hibernate.mapping.Collection;
@@ -94,7 +92,7 @@ abstract public class BasicPOJOClass implements POJOClass, MetaAttributeConstant
 		String generatedName = qualifyInnerClass(getGeneratedClassName());
 		String qualifier = StringHelper.qualifier( getMappedClassName() );
 		if ( "".equals( qualifier ) ) {
-			return qualifier + "." + generatedName;
+			return qualifier + generatedName;
 		}
 		else {
 			return generatedName;
@@ -105,7 +103,34 @@ abstract public class BasicPOJOClass implements POJOClass, MetaAttributeConstant
 	 * @return unqualified classname for this class (can be changed by meta attribute "generated-class")
 	 */
 	public String getDeclarationName() {
-		return qualifyInnerClass(StringHelper.unqualify( getGeneratedClassName() ));
+		String declarationName = qualifyInnerClass(StringHelper.unqualify( getGeneratedClassName() ));
+		return declarationName;
+	}
+	
+	/**
+	 * <p>获取去掉Tk头字母的类名</p>
+	 * @author kennylee
+	 * @return
+	 */
+	public String getFriendlyClassName(){
+		String declarationName = this.getDeclarationName();
+		//TODO 这样去掉tk开头class不太准确，因为这里是一个完全限定类名。  by kennylee
+		if(declarationName.contains("Tk")){
+			declarationName = declarationName.replaceFirst("Tk", "");
+		}
+		return declarationName;		
+	}
+	
+	/**
+	 * <p>生成首字母小写的名字</p>
+	 * @author kennylee
+	 * @return
+	 */
+	public String getLowDeclarationName() {
+		String declarationName = getDeclarationName();
+		String firstLetter = declarationName.substring(0, 1).toLowerCase();
+		String otherLetters = declarationName.substring(1);
+		return firstLetter + otherLetters;
 	}
 	
 	protected String getGeneratedClassName()
@@ -541,12 +566,25 @@ abstract public class BasicPOJOClass implements POJOClass, MetaAttributeConstant
 	}
 	
 	public String getFieldJavaDoc(Property property, int indent) {
+		return this.getFieldJavaDoc(property, indent, true);
+	}
+	
+	/**
+	 * <p>扩展原有的 getFieldJavaDoc(Property property, int indent);方法，支持不添加*号前缀</p>
+	 * @author kennylee
+	 * 
+	 * @param property 属性
+	 * @param indent 分割数
+	 * @param isNeedPrefix 是否自动添加*号前缀。
+	 * @return
+	 */
+	public String getFieldJavaDoc(Property property, int indent,boolean isNeedPrefix) {
 		MetaAttribute c = property.getMetaAttribute( "field-description" );
 		if ( c == null ) {
 			return c2j.toJavaDoc( "", indent );
 		}
 		else {
-			return c2j.toJavaDoc( c2j.getMetaAsString( property, "field-description" ), indent );
+			return c2j.toJavaDoc( c2j.getMetaAsString( property, "field-description" ), indent, isNeedPrefix );
 		}
 	}
 	
@@ -976,6 +1014,21 @@ abstract public class BasicPOJOClass implements POJOClass, MetaAttributeConstant
 			return null;
 		}
 	}	
+	
+	/**
+	 * <p>检查ExtraClassCode里面是否定义了SerialVersionUID。</p>
+	 * @author kennylee
+	 * @return true if has SerialVersionUID code，otherwise false。
+	 */
+	public boolean hasSerialVersionUID(){
+		boolean flag = false;
+		String extraClassCode = this.getExtraClassCode();
+		if(extraClassCode!=null && extraClassCode.length() > 0 &&
+				extraClassCode.contains("static final long serialVersionUID")){
+			flag = true;
+		}
+		return flag;
+	}
 	
 }
  

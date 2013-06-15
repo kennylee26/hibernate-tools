@@ -365,21 +365,48 @@ public class Cfg2HbmTool {
 
 	public String getClassName(PersistentClass pc) {
 		if (pc.hasPojoRepresentation() ) {
-			return pc.getClassName();
+			String className = pc.getClassName();
+			className = addPoToPackage(className);//XXX modify by kennylee 
+			return className;
 		}
 		else {
 			// todo: return null?
 			throw new ExporterException(pc + " does not have a pojo rep.");
 		}
 	}
+	
+	/**
+	 * 添加po的包名到原始的完全限定类名
+	 * @author kennylee
+	 * @param originalClassName 完全限定类名
+	 * @return String 修正后的字符串
+	 */
+	static String addPoToPackage(String originalClassName){
+		String[] splits = originalClassName.split("\\.");
+		if(splits.length < 2){
+			return originalClassName;
+		}
+		StringBuilder sbd = new StringBuilder();
+		for (int i = 0; i < splits.length; i++) {
+			String string = splits[i];
+			sbd.append(string);
+			if(i != splits.length-1)			
+				sbd.append(".");
+			if(i == splits.length-2){
+				sbd.append("po.");
+			}
+		}
+		return sbd.toString();
+	}
 
 	public String getClassName(OneToMany om) {
-		return om.getAssociatedClass().getClassName();
+		return addPoToPackage(om.getAssociatedClass().getClassName());//XXX modify by kennylee 
 	}
 
 	public String getProxyInterfaceName(PersistentClass pc) {
 		if (pc.hasPojoRepresentation() ) {
-			return pc.getProxyInterfaceName();
+			return addPoToPackage(pc.getProxyInterfaceName());//XXX modify by kennylee 
+			
 		}
 		else {
 			throw new ExporterException(pc + " does not have a pojo rep.");

@@ -80,6 +80,45 @@ public interface POJOClass extends ImportContext {
 	public boolean needsToString();
 	
 	public String getFieldJavaDoc(Property property, int indent);
+	
+	/**
+	 * <p>扩展原有的 getFieldJavaDoc(Property property, int indent);方法，支持不添加*号前缀</p>
+	 * @author kennylee
+	 * 
+	 * @param property 属性
+	 * @param indent 分割数
+	 * @param isNeedPrefix 是否自动添加*号前缀。
+	 * @return
+	 */
+	public String getFieldJavaDoc(Property property, int indent,boolean isNeedPrefix);
+	/**
+	 * <p>检查在扩展代码中是否定义了SerialVersionUID</p>
+	 * @author kennylee
+	 * @return
+	 */
+	public boolean hasSerialVersionUID();
+	
+	/**
+	 * 生成首字母小写的名字
+	 * @author kennylee
+	 * @return
+	 */
+	public String getLowDeclarationName();
+	
+	/**
+	 * <p>获取去掉Tk头字母的类名</p>
+	 * @author kennylee
+	 * @return
+	 */
+	public String getFriendlyClassName();
+	
+	/**
+	 * 生成基本的包名
+	 * @author kennylee
+	 * @return
+	 */
+	//public String getBaseDeclarationName();
+	
 	public String getFieldDescription(Property property);
 
 	public Object getDecoratedObject();

@@ -102,17 +102,33 @@ public class Cfg2JavaTool {
 	 * @param string
 	 */
 	public String toJavaDoc(String string, int indent) {
+		return this.toJavaDoc(string, indent, true);
+	}
+	
+	/**
+	 * <p>Convert string into something that can be rendered nicely into a javadoc
+	 * comment.</p>
+	 * 
+	 * @author kennylee
+	 *
+	 * @param string
+	 * @param isNeedPrefix if true, Prefix each line with a star ('*'). otherwise don't add star.
+	 */
+	public String toJavaDoc(String string, int indent, boolean isNeedPrefix) {
 		StringBuffer result = new StringBuffer();
-
+		
 		if ( string != null ) {
 			String[] lines = StringUtils.split( string, "\n\r\f" );
 			for ( int i = 0; i < lines.length ; i++ ) {
-				String docline = " * " + lines[i];
+				String docline = "";
+				if(isNeedPrefix)
+					docline += " * ";
+				docline += lines[i];
 				if ( i < lines.length - 1 ) docline += "\n";
 				result.append( StringUtils.leftPad( docline, docline.length() + indent ) );
 			}
 		}
-
+		
 		return result.toString();
 	}
 
@@ -160,6 +176,7 @@ public class Cfg2JavaTool {
 		return getJavaTypeName(p, useGenerics, new NoopImportContext());
 	}
 
+	//XXX modify by kennylee 加了全部Cfg2HbmTool.addPoToPackage
 	public String getJavaTypeName(Property p, boolean useGenerics, ImportContext importContext) {
 		String overrideType = getMetaAsString( p, "property-type" );
 		if ( !StringHelper.isEmpty( overrideType ) ) {
@@ -167,17 +184,17 @@ public class Cfg2JavaTool {
 			if ( useGenerics && importType.indexOf( "<" )<0) {
 				if ( p.getValue() instanceof Collection ) {
 					String decl = getGenericCollectionDeclaration( (Collection) p.getValue(), true, importContext );
-					return importType + decl;
+					return Cfg2HbmTool.addPoToPackage(importType + decl);
 				}
 			}
-			return importType;
+			return Cfg2HbmTool.addPoToPackage(importType);
 		}
 		else {
 			String rawType = getRawTypeName( p, useGenerics, true, importContext );
 			if(rawType==null) {
 					throw new IllegalStateException("getJavaTypeName *must* return a value");				
 			}
-			return importContext.importType(rawType);
+			return Cfg2HbmTool.addPoToPackage(importContext.importType(rawType));
 		}
 	}
 	

@@ -27,6 +27,16 @@ public abstract class ExporterTask {
 	File destdir;
 	private Path templatePath;
 	private String templatePrefix = null;
+	//XXX add by kennylee 
+	/**
+	 * 是否覆盖已存在的文件
+	 */
+	private boolean isOverride = true;
+	/**
+	 * 是否需要数据库中的tk前缀
+	 */
+	private boolean isTk = true;
+	//END
 	
 	public ExporterTask(HibernateToolTask parent) {
 		this.parent = parent;
@@ -96,7 +106,29 @@ public abstract class ExporterTask {
 		exporter.setProperties(prop);
 		exporter.setConfiguration( parent.getConfiguration() );
 		exporter.setOutputDirectory( getDestdir() );
-		exporter.setTemplatePath( getTemplatePath().list() );			
+		exporter.setTemplatePath( getTemplatePath().list() );	
+		exporter.setOverride(isOverride());
+		exporter.setTk(isTk());
 		return exporter;
+	}
+
+
+	public boolean isOverride() {
+		return isOverride;
+	}
+
+
+	public void setOverride(boolean isOverride) {
+		this.isOverride = isOverride;
+	}
+
+
+	public boolean isTk() {
+		return isTk;
+	}
+
+
+	public void setTk(boolean isTk) {
+		this.isTk = isTk;
 	}
 }

@@ -1,5 +1,7 @@
 <#-- // Fields -->
-
+<#if !pojo.hasSerialVersionUID()>
+	private static final long serialVersionUID = 1L; 
+</#if>
 <#foreach field in pojo.getAllPropertiesIterator()><#if pojo.getMetaAttribAsBool(field, "gen-property", true)> <#if pojo.hasMetaAttribute(field, "field-description")>    /**
      ${pojo.getFieldJavaDoc(field, 0)}
      */

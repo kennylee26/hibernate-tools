@@ -1,8 +1,11 @@
 <${c2h.getTag(clazz)}
     name="${c2h.getClassName(clazz)}"
+<#-- 本身c2h.getClassName(clazz)就不等于clazz.entityName，因为前者加了po的包名，默认情况下是根package+实体名，中间缺了po一个目录。所以注释掉 -->
+<#--
 <#if !c2h.getClassName(clazz).equals(clazz.entityName)>
     entity-name="${clazz.entityName}"
 </#if>
+-->
 <#if clazz.superclass?exists>
     extends="${clazz.getSuperclass().className}"
 </#if>

@@ -6,29 +6,32 @@ import java.util.Map;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.tool.hbm2x.pojo.POJOClass;
 
-public class DAOExporter extends POJOExporter {
+/**
+ * @author kennylee
+ *
+ */
+public class DAOInterfaceExporter extends POJOExporter {
 
-    private static final String DAO_DAOHOME_FTL = "dao/daoimpl.ftl";
+    private static final String DAO_DAOHOME_FTL = "dao/inter_dao.ftl";
 
     private String sessionFactoryName = "SessionFactory";
 
-    public DAOExporter() {
+    public DAOInterfaceExporter() {
     }
     
-    public DAOExporter(Configuration cfg, File outputdir) {
+    public DAOInterfaceExporter(Configuration cfg, File outputdir) {
         super(cfg, outputdir);        
     }
+    
+    public DAOInterfaceExporter(Configuration cfg, File outputdir, boolean isOverride,boolean isTk) {
+    	super(cfg, outputdir, isOverride, isTk);        
+    }
 
-    public DAOExporter(Configuration cfg, File destDir,
-			boolean override, boolean tk) {
-        super(cfg, destDir, override, tk);        
-	}
-
-	protected void init() {
+    protected void init() {
     	super.init();
     	setTemplateName(DAO_DAOHOME_FTL);
-    	//XXX modify by kennylee, add dao/impl folder
-    	setFilePattern("{package-name}/dao/impl/{class-name}DAOImpl.java");    	    	
+    	//XXX modify by kennylee, add dao folder.
+    	setFilePattern("{package-name}/dao/{class-name}DAO.java");    	    	
     }
     
     protected void exportComponent(Map additionalContext, POJOClass element) {

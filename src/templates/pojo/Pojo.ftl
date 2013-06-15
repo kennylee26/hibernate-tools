@@ -1,6 +1,5 @@
-${pojo.getPackageDeclaration()}
-// Generated ${date} by Hibernate Tools ${version}
-
+package ${pojo.getPackageName()}.po;
+<#-- // Generated ${date} by Hibernate Tools ${version} -->
 <#assign classbody>
 <#include "PojoTypeDeclaration.ftl"/> {
 
@@ -26,4 +25,3 @@ ${pojo.getPackageDeclaration()}
 
 ${pojo.generateImports()}
 ${classbody}
-
