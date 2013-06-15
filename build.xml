@@ -2,7 +2,7 @@
   HibernateTools ANT build script.
 -->
 
-<project name="HibernateTools" default="dist" basedir=".">
+<project name="HibernateTools" default="" basedir=".">
 
     <!-- Name of project and version, used to create filenames -->
     <property name="Name" value="Hibernate Tools"/>
@@ -36,6 +36,7 @@
     <property name="template.dir" value="src/templates"/>
     <property name="dist.template.dir" value="${dist.dir}/src/templates"/>
 	
+	<!--
 	<target name="copysource" description="Copy sources to dist dir" depends="common-build.copysource">
         <mkdir dir="${dist.template.dir}"/>
     </target>
@@ -76,6 +77,8 @@
     </target>   
  
     <target name="dist" depends="jartest,common-build.dist"/>
+        -->
+    
         
 <!--    <target name="genjar" depends="init">
         <taskdef resource="genjar.properties" classpath="C:\work\products\GenJar\genjar.jar"/>   
