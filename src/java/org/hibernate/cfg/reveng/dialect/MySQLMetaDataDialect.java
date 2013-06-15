@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.hibernate.annotations.common.util.StringHelper;
+
 public class MySQLMetaDataDialect extends JDBCMetaDataDialect {
 
 	/**
@@ -55,5 +57,77 @@ public class MySQLMetaDataDialect extends JDBCMetaDataDialect {
 				throw getSQLExceptionConverter().convert(e, "Could not get list of suggested identity strategies from database. Probably a JDBC driver problem. ", sql);		         
 			} 		
 		}
+	
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see
+	 * org.hibernate.cfg.reveng.dialect.JDBCMetaDataDialect#getTables(java.lang
+	 * .String, java.lang.String, java.lang.String)
+	 */
+	//XXX Add by KennyLee, fixed MySQL comment。
+	public Iterator getTables(String xcatalog, String xschema, String xtable) {
+		try {
+			final String catalog = caseForSearch(xcatalog);
+			final String schema = caseForSearch(xschema);
+			final String table = caseForSearch(xtable);
+
+			log.debug("getTables(" + catalog + "." + schema + "." + table + ")");
+
+			ResultSet tableRs = getMetaData().getTables(catalog, schema, table,
+					new String[] { "TABLE", "VIEW" });
+
+			return new ResultSetIterator(tableRs, getSQLExceptionConverter()) {
+
+				Map element = new HashMap();
+
+				protected Object convertRow(ResultSet tableResultSet)
+						throws SQLException {
+					element.clear();
+					putTablePart(element, tableResultSet);
+					element.put("TABLE_TYPE",
+							tableResultSet.getString("TABLE_TYPE"));
+
+					String remarks = tableResultSet.getString("REMARKS");
+					if (StringHelper.isEmpty(remarks)) {
+						String sql = "show table status "
+								+ (schema == null ? "" : " from " + schema
+										+ " ") + " like '"
+								+ element.get("TABLE_NAME") + "' ";
+						PreparedStatement statement = getConnection()
+								.prepareStatement(sql);
+
+						ResultSet tableRs = statement.executeQuery();
+
+						if (tableRs.next()) {
+							remarks = tableRs.getString("COMMENT");
+						}
+					}
+					element.put("REMARKS", remarks);
+					return element;
+				}
+
+				protected Throwable handleSQLException(SQLException e) {
+					// schemaRs and catalogRs are only used for error reporting
+					// if
+					// we get an exception
+					String databaseStructure = getDatabaseStructure(catalog,
+							schema);
+					throw getSQLExceptionConverter().convert(
+							e,
+							"Could not get list of tables from database. Probably a JDBC driver problem. "
+									+ databaseStructure, null);
+				}
+			};
+		} catch (SQLException e) {
+			// schemaRs and catalogRs are only used for error reporting if we
+			// get an exception
+			String databaseStructure = getDatabaseStructure(xcatalog, xschema);
+			throw getSQLExceptionConverter().convert(
+					e,
+					"Could not get list of tables from database. Probably a JDBC driver problem. "
+							+ databaseStructure, null);
+		}
 	}
+}
 	

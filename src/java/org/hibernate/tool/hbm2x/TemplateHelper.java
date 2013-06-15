@@ -64,6 +64,9 @@ public class TemplateHelper {
         context = new SimpleHash(ObjectWrapper.BEANS_WRAPPER);
     	freeMarkerEngine = new Configuration();
         
+		//XXX Add by KennyLee, support Chinese
+    	freeMarkerEngine.setDefaultEncoding("UTF-8");
+    	//END
         List loaders = new ArrayList();
         
         for (int i = 0; i < templatePaths.length; i++) {
