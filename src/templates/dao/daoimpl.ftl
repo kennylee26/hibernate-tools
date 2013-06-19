@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import ${pojo.getPackageName()}.po.${declarationName};
 import ${pojo.getPackageName()}.dao.${declarationName}DAO;
 /**
- * Home object for domain model class ${declarationName}.
+ * DAO object for domain model class ${declarationName}.
  * @see ${pojo.getPackageName()}.po.${declarationName}
  * @author Hibernate Tools, kennylee
  */
