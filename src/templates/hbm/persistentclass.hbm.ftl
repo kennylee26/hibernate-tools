@@ -13,7 +13,7 @@
     table="${clazz.table.quotedName}"
 </#if>
 <#if clazz.table.schema?exists>
-    schema="${clazz.table.quotedSchema}"
+    <#--schema="${clazz.table.quotedSchema}"-->
 </#if>
 <#if clazz.table.catalog?exists>
     catalog="${clazz.table.catalog}"
